@@ -8,8 +8,7 @@ const register = async (data) => {
     !data.lastName ||
     !data.email ||
     !data.password ||
-    !data.dateOfBirth ||
-    !data.bloodType
+    !data.phoneNumber 
   ) {
     throw Error("All field must be filled");
   }
@@ -34,7 +33,7 @@ const register = async (data) => {
     firstName: user.firstName,
     lastName: user.lastName,
     email: user.email,
-    dateOfBirth: user.dateOfBirth,
+    phoneNumber: user.phoneNumber,
     bloodType: user.bloodType,
   };
 };
