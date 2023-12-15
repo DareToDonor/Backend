@@ -63,7 +63,7 @@ const login = async (data) => {
     throw Error("Wrong Password");
   };
 
-  const token = jwt.sign({ id: user.id,username: user.username }, 'capstone');
+  const token = jwt.sign({ id: user.id,username: user.username }, process.env.JWT_SECRET);
 
   return token;
 }

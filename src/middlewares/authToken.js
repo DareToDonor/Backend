@@ -8,7 +8,7 @@ module.exports = async (req, res, next) => {
   const JWTToken = token.split(" ").pop();
   try {
     // Verify token
-    const data = await jwt.verify(JWTToken, "capstone");
+    const data = await jwt.verify(JWTToken, process.env.JWT_SECRET);
     // console.log(data.id);
 
 

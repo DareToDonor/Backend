@@ -16,6 +16,10 @@ module.exports = {
         autoIncrement: true,
         allowNull: false,
       },
+      idDonor : {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       firstName: {
         type: Sequelize.STRING,
         allowNull: false,

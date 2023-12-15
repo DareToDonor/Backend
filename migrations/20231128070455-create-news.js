@@ -13,8 +13,12 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      description: {
+      content: {
         type: Sequelize.TEXT,
+        allowNull: false,
+      },
+      image: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       createdAt: {
