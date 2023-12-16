@@ -2,24 +2,23 @@ const { donor_locations } = require("../../models");
 const { uploadFile } = require("../middlewares/uploadFile");
 
 const addDonorLocation = async (newData, file) => {
-  const pathName = "image";
+  const pathName = "image/donorLocation";
   const{ publicUrl} = await uploadFile(file, pathName);
   const image = publicUrl;
-  const status = "buka";
+  const status = 1;
   const donorLocation = await donor_locations.create({
     ...newData, 
     status,
     image 
   });
-  console.log(donorLocation);
   return donorLocation;
 };
 
-getAllLocations = async () => {
+const getAllLocations = async (city) => {
   const donorLocations = await donor_locations.findAll();
   return donorLocations;
 }
-getLocationsById = async (id) => {
+const getLocationsById = async (id) => {
   const donorLocation = await donor_locations.findByPk(id);
   if (!donorLocation) {
     throw Error("Donor Location Not Found")
@@ -27,7 +26,7 @@ getLocationsById = async (id) => {
   return donorLocation;
 }
 
-getAllByCity = async (cityName) => {
+const getAllLocationsByCity = async (cityName) => {
   const donorLocations = await donor_locations.findAll({
     where: {
       city: cityName,
@@ -36,6 +35,21 @@ getAllByCity = async (cityName) => {
   return donorLocations;
 }
 
+const editLocation = async (status , id) => {
+  const donorLocation = await donor_locations.update(
+    {status : status}, 
+    {
+    where: {
+      id,
+    }
+  });
+  return donorLocation;
+}
+
 module.exports = {
   addDonorLocation,
+  getAllLocations,
+  getLocationsById,
+  getAllLocationsByCity,
+  editLocation
 };

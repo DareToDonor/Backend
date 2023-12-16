@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const { upload } = require("../middlewares/uploadFile");
+
 
 const authToken = require('../middlewares/authToken')
 
@@ -12,11 +14,19 @@ const {
 } = require("../services/newsServices");
 
 router.get("/", async (req, res) => {
-  const news = await getAllNews();
-  return res.status(200).send({
-    status: "success",
-    data: news,
-  });
+  try {
+    const news = await getAllNews();
+    return res.status(200).send({
+      status: "success",
+      message: "Get All News",
+      data: news,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      status: "failed",
+      message: error.message,
+    });
+  }
 });
 
 router.get("/:id", authToken, async (req, res) => {
@@ -24,6 +34,7 @@ router.get("/:id", authToken, async (req, res) => {
     const news = await getNewsById(parseInt(req.params.id));
     return res.status(200).send({
       status: "success",
+      message: "Get News By ID",
       data: news,
     });
   } catch (error) {
@@ -34,11 +45,11 @@ router.get("/:id", authToken, async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", upload.single("image"), async (req, res) => {
   const newData = req.body;
-
+  const file = req.file;
   try {
-    const data = await addNews(newData);
+    const data = await addNews(newData,file);
 
     return res.status(200).send({
       status: "success",

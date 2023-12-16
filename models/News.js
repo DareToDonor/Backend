@@ -2,7 +2,8 @@ module.exports = (sequelize, DataTypes) => {
   const News = sequelize.define('News', {
     // Define your fields here
     title: DataTypes.STRING,
-    description: DataTypes.TEXT,
+    content: DataTypes.TEXT,
+    image: DataTypes.STRING,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
     // ...

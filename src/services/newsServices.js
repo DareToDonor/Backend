@@ -1,8 +1,10 @@
 const { News } = require("../../models");
+const { uploadFile } = require("../middlewares/uploadFile");
+
 const getAllNews = async () => {
   const news = await News.findAll();
   return news;
-}
+} 
 
 const getNewsById = async (newsId)  =>{
   const news = await News.findByPk(newsId);
@@ -12,8 +14,14 @@ const getNewsById = async (newsId)  =>{
   return news;
 }
 
-const addNews = async (newNewsData) => {
-  const news = await News.create(newNewsData);
+const addNews = async (newNewsData, file) => {
+  const pathName = "image/news";
+  const{ publicUrl} = await uploadFile(file, pathName);
+  const image = publicUrl
+  const news = await News.create({
+    ...newNewsData,
+    image
+  });
   return news;
 }
 
