@@ -22,7 +22,7 @@ module.exports = {
         type: Sequelize.TEXT
       },
       status: {
-        type: Sequelize.STRING
+        type: Sequelize.BOOLEAN
       },
       image: {
         type: Sequelize.STRING
