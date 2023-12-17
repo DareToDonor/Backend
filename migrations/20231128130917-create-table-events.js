@@ -14,7 +14,7 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      description: {
+      content: {
         type: Sequelize.TEXT,
         allowNull: false,
       },
@@ -25,6 +25,21 @@ module.exports = {
       image: {
         type: Sequelize.STRING,
         allowNull: false,
+      },
+      name: {
+        type: Sequelize.STRING
+      },
+      city: {
+        type: Sequelize.STRING
+      },
+      province: {
+        type: Sequelize.STRING
+      },
+      address: {
+        type: Sequelize.TEXT
+      },
+      status: {
+        type: Sequelize.BOOLEAN
       },
       createdAt: {
         allowNull: false,

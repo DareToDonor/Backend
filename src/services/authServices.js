@@ -1,5 +1,5 @@
 const { User } = require("../../models");
-const { bcrypt, compareSync } = require("bcrypt");
+const  bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const register = async (data) => {
@@ -20,7 +20,7 @@ const register = async (data) => {
   if (checkEmail) {
     throw Error("Email has been used");
   }
-  const password = bcrypt.hashSync(data.password, 10);
+  const password = await bcrypt.hash(data.password, 10);
   data.password = password;
 
   const user = await User.create(data);
@@ -34,7 +34,6 @@ const register = async (data) => {
     lastName: user.lastName,
     email: user.email,
     phoneNumber: user.phoneNumber,
-    bloodType: user.bloodType,
   };
 };
 
@@ -57,7 +56,7 @@ const login = async (data) => {
     throw Error("Email Not Found");
   }
 
-  const isPasswordCorrect = compareSync(data.password, user.password);
+  const isPasswordCorrect = bcrypt.compareSync(data.password, user.password);
 
   if (!isPasswordCorrect){
     throw Error("Wrong Password");

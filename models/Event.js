@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    description: {
+    content: {
       type: DataTypes.TEXT,
       allowNull: false,
     },
@@ -18,6 +18,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DATE,
       allowNull: false,
     },
+    image: DataTypes.STRING,
+    name: DataTypes.STRING,
+    city: DataTypes.STRING,
+    province: DataTypes.STRING,
+    address: DataTypes.TEXT,
+    status: DataTypes.BOOLEAN,
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE

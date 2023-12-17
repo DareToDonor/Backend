@@ -39,7 +39,7 @@ router.post("/locations", upload.single("image"), async (req, res) => {
 router.put("/locations/:id", async(req,res) =>{
   try {
     const { status } = req.body;
-    const editedLocation = await editLocation(status,parseInt(req.params.id));
+    const editedLocation = await editLocation(Boolean(status),parseInt(req.params.id));
 
     return res.status(200).send({
       status: "success",

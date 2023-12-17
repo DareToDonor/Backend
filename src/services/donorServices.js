@@ -1,4 +1,4 @@
-const { donor_locations } = require("../../models");
+const { donor_locations, Events } = require("../../models");
 const { uploadFile } = require("../middlewares/uploadFile");
 
 const addDonorLocation = async (newData, file) => {

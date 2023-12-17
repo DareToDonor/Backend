@@ -18,7 +18,8 @@ const upload = multer({
  
 const uploadFile = async (file,path) => {
   try {
-    const fileName = `${path}/${Date.now()}-${file.originalname}`;
+    // const fileName = `${path}/${Date.now()}-${file.originalname}`;
+    const fileName = `${path}/${Date.now()}-${file.originalname}`.replace(/\s/g, '');
     const cloudFile = bucket.file(fileName);
 
     // Upload the file to the cloud storage bucket
