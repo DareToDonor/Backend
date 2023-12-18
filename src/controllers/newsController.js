@@ -3,7 +3,7 @@ const router = express.Router();
 const { upload } = require("../middlewares/uploadFile");
 
 
-const authToken = require('../middlewares/authToken')
+const authMiddleware = require('../middlewares/authMiddleware');
 
 const {
   getAllNews,
@@ -13,7 +13,7 @@ const {
   deleteNewsById,
 } = require("../services/newsServices");
 
-router.get("/", async (req, res) => {
+router.get("/", authMiddleware.checkLogin, async (req, res) => {
   try {
     const news = await getAllNews();
     return res.status(200).send({
@@ -29,7 +29,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/:id", authToken, async (req, res) => {
+router.get("/:id", authMiddleware.checkLogin, async (req, res) => {
   try {
     const news = await getNewsById(parseInt(req.params.id));
     return res.status(200).send({
@@ -45,7 +45,7 @@ router.get("/:id", authToken, async (req, res) => {
   }
 });
 
-router.post("/", upload.single("image"), async (req, res) => {
+router.post("/", authMiddleware.checkAdmin, upload.single("image"), async (req, res) => {
   const newData = req.body;
   const file = req.file;
   try {
@@ -64,7 +64,7 @@ router.post("/", upload.single("image"), async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", authMiddleware.checkAdmin, async (req, res) => {
   const newData = req.body;
   try {
     const updatedData = await editNews(parseInt(req.params.id), newData);
@@ -81,7 +81,7 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authMiddleware.checkAdmin, async (req, res) => {
   try {
     const deleteData = await deleteNewsById(parseInt(req.params.id));
     if (deleteData) {

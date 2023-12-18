@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     bloodType: DataTypes.STRING,
     address: DataTypes.STRING,
     imageProfile: DataTypes.STRING,
+    role: DataTypes.STRING,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
     // ...

@@ -1,5 +1,5 @@
 const { User } = require("../../models");
-const  bcrypt = require("bcrypt");
+const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const register = async (data) => {
@@ -8,7 +8,7 @@ const register = async (data) => {
     !data.lastName ||
     !data.email ||
     !data.password ||
-    !data.phoneNumber 
+    !data.phoneNumber
   ) {
     throw Error("All field must be filled");
   }
@@ -22,8 +22,9 @@ const register = async (data) => {
   }
   const password = await bcrypt.hash(data.password, 10);
   data.password = password;
+  const role = "user";
 
-  const user = await User.create(data);
+  const user = await User.create({ ...data, role: role });
   if (!user) {
     throw Error("Error Cannot be created");
   }
@@ -37,13 +38,11 @@ const register = async (data) => {
   };
 };
 
-
 // Login
 
 const login = async (data) => {
   //check field
-  if (!data.email || !data.password
-  ) {
+  if (!data.email || !data.password) {
     throw Error("Please Insert Username and Password");
   }
   // check email
@@ -52,22 +51,35 @@ const login = async (data) => {
       email: data.email,
     },
   });
+
+  const payload = {
+    id: user.id,
+    email: user.email,
+    role: user.role,
+  };
   if (!user) {
     throw Error("Email Not Found");
   }
 
   const isPasswordCorrect = bcrypt.compareSync(data.password, user.password);
 
-  if (!isPasswordCorrect){
+  if (!isPasswordCorrect) {
     throw Error("Wrong Password");
-  };
+  }
 
-  const token = jwt.sign({ id: user.id,username: user.username }, process.env.JWT_SECRET);
+  const token = jwt.sign(
+    { 
+      id: user.id, 
+      email: user.email, 
+      role: user.role 
+    },
+    process.env.JWT_SECRET
+  );
 
-  return token;
-}
+  return { payload, token };
+};
 
 module.exports = {
   register,
-  login
+  login,
 };

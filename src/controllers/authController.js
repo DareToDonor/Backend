@@ -24,11 +24,12 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req,res) => {
   const data = req.body;
   try {
-    const userLogin = await login(data);
+    const {payload, token} = await login(data);
     return res.status(200).send({
       status: "success",
       message: "User Login successfully",
-      data: userLogin,
+      data: payload,
+      token,
     });
   } catch (error) {
     return res.status(400).send({

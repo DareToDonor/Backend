@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const { upload } = require("../middlewares/uploadFile");
 
+const authMiddleware = require('../middlewares/authMiddleware');
+const checkDonorIdMiddleware = require('../middlewares/checkDonorId');
+
 const { 
   addDonorLocation,
   getAllLocations,
@@ -10,14 +13,14 @@ const {
   editLocation,
  } = require("../services/donorServices");
 
-router.get("/", (req, res) => {
+router.get("/", authMiddleware.checkLogin , checkDonorIdMiddleware, (req, res) => {
   const idUser = req.userInfo.id;
 });
 
 
 
 // Donor Locations
-router.post("/locations", upload.single("image"), async (req, res) => {
+router.post("/locations",authMiddleware.checkAdmin , upload.single("image"), async (req, res) => {
   try {
     const newData = req.body;
     const file = req.file;
@@ -36,7 +39,7 @@ router.post("/locations", upload.single("image"), async (req, res) => {
 });
 
 // edit 
-router.put("/locations/:id", async(req,res) =>{
+router.put("/locations/:id", authMiddleware.checkLogin , async(req,res) =>{
   try {
     const { status } = req.body;
     const editedLocation = await editLocation(Boolean(status),parseInt(req.params.id));
@@ -53,7 +56,7 @@ router.put("/locations/:id", async(req,res) =>{
 
 // get all locations
 
-router.get("/locations", async (req, res) => {
+router.get("/locations", authMiddleware.checkLogin , async (req, res) => {
   try {
     const { city } = req.query;
     if (city) {
@@ -82,7 +85,7 @@ router.get("/locations", async (req, res) => {
 });
 
 // get locations by ID
-router.get("/locations/:id", async (req,res) => {
+router.get("/locations/:id", authMiddleware.checkLogin , async (req,res) => {
   try {
     const getLocation = await getLocationsById(parseInt(req.params.id));
     return res.status(200).send({
