@@ -1,6 +1,6 @@
 const { Event, donor_locations } = require("../../models");
 const { uploadFile } = require("../middlewares/uploadFile");
-const { addDonorLocation } = require("../services/donorServices");
+const { addDonorLocation } = require("./locationServices");
 
 const getAllEvents = async () => {
   const events = await Event.findAll();

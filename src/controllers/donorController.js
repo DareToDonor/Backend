@@ -1,107 +1,91 @@
 const express = require("express");
 const router = express.Router();
-const { upload } = require("../middlewares/uploadFile");
 
-const authMiddleware = require('../middlewares/authMiddleware');
+const authMiddleware = require("../middlewares/authMiddleware");
 const checkDonorIdMiddleware = require('../middlewares/checkDonorId');
 
-const { 
-  addDonorLocation,
-  getAllLocations,
-  getLocationsById,
-  getAllLocationsByCity,
-  editLocation,
- } = require("../services/donorServices");
+const {
+    getAllDonorByStatus,
+    createDonor,
+    getDonor,
+    editDonorStatus
+} = require("../services/donorServices");
 
-router.get("/", authMiddleware.checkLogin , checkDonorIdMiddleware, (req, res) => {
-  const idUser = req.userInfo.id;
+router.get("/:idUser/:status", async (req, res, next) => {
+    await authMiddleware.checkLogin(req, res, next);
+    let userId = parseInt(req.params.idUser);
+    let status = Boolean(req.params.status);
+
+    let data = await getAllDonorByStatus(userId, status);
+
+    let code = (!data) ? 400 : 200;
+    let message = (!data) ?
+        ((status) ? "No donors have been made" : "No donor schedule have been made") :
+        "Data Retrieved Successfully";
+
+    return res.status(code).send( {
+        status: (!data ? "Failed" : "Success"),
+        message: message,
+        data: (!data ? null : data)
+    });
 });
 
+router.post("/:idUser", async (req, res, next) => {
+    try {
+        await authMiddleware.checkLogin(req, res, next);
+        let userId = parseInt(req.params.idUser);
+        let data = req.body;
 
-
-// Donor Locations
-router.post("/locations",authMiddleware.checkAdmin , upload.single("image"), async (req, res) => {
-  try {
-    const newData = req.body;
-    const file = req.file;
-    const addNewLocations = await addDonorLocation(newData, file);
-    return res.status(200).send({
-      status: "success",
-      message: "File uploaded successfully",
-      addNewLocations,
-    });
-  } catch (error) {
-    return res.status(400).send({
-      status: "failed",
-      message: error.message,
-    });
-  }
-});
-
-// edit 
-router.put("/locations/:id", authMiddleware.checkLogin , async(req,res) =>{
-  try {
-    const { status } = req.body;
-    const editedLocation = await editLocation(Boolean(status),parseInt(req.params.id));
-
-    return res.status(200).send({
-      status: "success",
-      message: "Data Updated Successfully",
-      editedLocation,
-    });
-  } catch (error) {
-    
-  }
-});
-
-// get all locations
-
-router.get("/locations", authMiddleware.checkLogin , async (req, res) => {
-  try {
-    const { city } = req.query;
-    if (city) {
-      const getLocations = await getAllLocationsByCity(city);
-      return res.status(200).send({
-        status: "success",
-        message: "Get Data Locations Success",
-        getLocations,
-      });
-    }else {
-      const getLocations = await getAllLocations();
-      return res.status(200).send({
-        status: "success",
-        message: "Get Data Locations Success",
-        getLocations,
-      });
+        let createNewDonor = await createDonor(data, userId);
+        return res.status(200).send({
+            status: "Success",
+            message: "Data added successfully",
+            data: createNewDonor
+        });
+    } catch (error) {
+        return res.status(400).send({
+            status: "Failed",
+            message: error.message
+        });
     }
-    
-
-  } catch (error) {
-    return res.status(500).send({
-      status: "failed",
-      message: error.message,
-    });
-  }
 });
 
-// get locations by ID
-router.get("/locations/:id", authMiddleware.checkLogin , async (req,res) => {
-  try {
-    const getLocation = await getLocationsById(parseInt(req.params.id));
-    return res.status(200).send({
-      status: "success",
-      message: "Get Data Locations Success",
-      getLocation,
+router.get("/:idDonor", async (req, res, next) => {
+    await authMiddleware.checkLogin(req, res, next);
+    await checkDonorIdMiddleware(req, res, next);
+
+    let donorId = parseInt(req.params.idDonor);
+    let data = await getDonor(donorId);
+
+    let code = (!data) ? 400 : 200;
+    let message = (!data) ? "Failed to fetch donor information" : "Successfully retrieved donor information";
+
+    return res.status(code).send({
+        status: (!data ? "Failed" : "Success"),
+        message: message,
+        data: (!data ? null : data)
     });
-  } catch (error) {
-    return res.status(500).send({
-      status: "failed",
-      message: error.message,
-    });
-  }
 });
 
+router.put("/:idDonor", async (req, res, next) => {
+    await authMiddleware.checkAdmin(req, res, next);
 
+    let { donorStatus } = req.body;
+    let donorId = parseInt(req.params.idDonor);
+    try {
+        let newData = await editDonorStatus(donorId, donorStatus);
 
+        return res.status(200).send({
+            status: "Success",
+            message: "Data Updated Successfully",
+            data: newData
+        });
+    } catch (error) {
+        return res.status(400).send({
+            status: "Failed",
+            message: error.message
+        });
+    }
+});
 
 module.exports = router;

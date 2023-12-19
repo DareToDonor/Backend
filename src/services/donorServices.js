@@ -1,55 +1,50 @@
-const { donor_locations, Events } = require("../../models");
-const { uploadFile } = require("../middlewares/uploadFile");
+const { donor } = require("../../models");
+const { donor_done, donor_appointment, donor_failed } = require("../helper/models/donor/descriptionHelper");
 
-const addDonorLocation = async (newData, file) => {
-  const pathName = "image/donorLocation";
-  const{ publicUrl} = await uploadFile(file, pathName);
-  const image = publicUrl;
-  const status = 1;
-  const donorLocation = await donor_locations.create({
-    ...newData, 
-    status,
-    image 
-  });
-  return donorLocation;
-};
+const getAllDonorByStatus = async (userId, status) => {
+    let donors = await donor.findAll({
+        where: {
+            idUser: userId,
+            status: status
+        }
+    });
 
-const getAllLocations = async (city) => {
-  const donorLocations = await donor_locations.findAll();
-  return donorLocations;
-}
-const getLocationsById = async (id) => {
-  const donorLocation = await donor_locations.findByPk(id);
-  if (!donorLocation) {
-    throw Error("Donor Location Not Found")
-  }
-  return donorLocation;
+    return donors;
 }
 
-const getAllLocationsByCity = async (cityName) => {
-  const donorLocations = await donor_locations.findAll({
-    where: {
-      city: cityName,
-    }
-  });
-  return donorLocations;
+const createDonor = async (newData, userId) => {
+    let status = false;
+    let description = donor_appointment;
+    let newDonorData = await donor.create({
+        ...newData,
+        userId,
+        status,
+        description
+    });
+
+    return newDonorData;
 }
 
-const editLocation = async (status , id) => {
-  const donorLocation = await donor_locations.update(
-    {status : status}, 
-    {
-    where: {
-      id,
-    }
-  });
-  return donorLocation;
+const getDonor = async (id) => {
+    let donorData = await donor.findByPk(id);
+
+    return donorData;
 }
 
-module.exports = {
-  addDonorLocation,
-  getAllLocations,
-  getLocationsById,
-  getAllLocationsByCity,
-  editLocation
-};
+const editDonorStatus = async (id, donorStatus) => {
+    let status = true;
+    let description = (donorStatus) ? donor_done : donor_failed;
+
+    let newDonorData = await donor.update({
+        status: status,
+        description: description
+    }, {
+        where: {
+            idUser: id
+        }
+    });
+
+    return newDonorData;
+}
+
+module.exports = { getAllDonorByStatus, createDonor, getDonor, editDonorStatus };

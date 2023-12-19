@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     idLocationDonor: DataTypes.INTEGER,
     donorCode: DataTypes.STRING,
     status: DataTypes.BOOLEAN,
+    description: DataTypes.TEXT,
     date: DataTypes.DATE
   },{
     tableName: 'donor',
