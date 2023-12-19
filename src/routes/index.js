@@ -14,7 +14,7 @@ const donorController = require('../controllers/donorController');
 
 
 router.use('/news', newsController);
-router.use('/users', authMiddleware.checkLogin, userController);
+router.use('/users',  userController);
 router.use('/events', eventController);
 router.use('/donors',donorController);
 router.use('/', authController);

@@ -14,12 +14,19 @@ const {
 } = require('../services/eventServices');
 
 router.get("/", authMiddleware.checkLogin, async (req, res) => {
-  const events = await getAllEvents();
-  return res.status(200).send({
-    status: "success",
-    message: "Success get News",
-    data: events,
-  });
+  try {
+    const events = await getAllEvents();
+    return res.status(200).send({
+      status: "success",
+      message: "Success get Event",
+      data: events,
+    });
+  } catch (error) {
+    return res.status(400).send({
+      status: "failed",
+      message: error.message,
+    });
+  }
 });
 
 router.get("/:id",  authMiddleware.checkLogin, async (req, res) => {
@@ -27,7 +34,7 @@ router.get("/:id",  authMiddleware.checkLogin, async (req, res) => {
     const event = await getEventById(parseInt(req.params.id));
     return res.status(200).send({
       status: "success",
-      message: "Success get News",
+      message: "Success get Event",
       data: event,
     });
   } catch (error) {
@@ -47,7 +54,7 @@ router.post("/",  authMiddleware.checkAdmin, upload.single("image"), async (req,
 
     return res.status(200).send({
       status: "success",
-      message: "Success add News",
+      message: "Success add Event",
       data: data,
     });
   } catch (error) {
@@ -65,7 +72,7 @@ router.put("/:id",  authMiddleware.checkAdmin, async (req, res) => {
     const updatedData = await editEvent(parseInt(req.params.id), newData, Boolean(status));
     return res.status(200).send({
       status: "success",
-      message: "Success update News",
+      message: "Success update Event",
       data: updatedData,
     });
   } catch (error) {
@@ -82,7 +89,7 @@ router.delete("/:id", authMiddleware.checkAdmin, async (req, res) => {
     if (deleteData) {
       return res.status(200).send({
         status: "success",
-        message: "Success deleted News",
+        message: "Success deleted Event",
       });
     }
   } catch (error) {
