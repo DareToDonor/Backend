@@ -1,6 +1,6 @@
 
 module.exports = (sequelize, DataTypes) => {
-  const donor_locations = sequelize.define('donor_locations', {
+  const DonorLocation = sequelize.define('DonorLocation', {
     name: DataTypes.STRING,
     city: DataTypes.STRING,
     province: DataTypes.STRING,
@@ -12,5 +12,5 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
   });
 
-  return donor_locations;
+  return DonorLocation;
 };

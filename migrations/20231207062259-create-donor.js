@@ -33,6 +33,9 @@ module.exports = {
       status: {
         type: Sequelize.BOOLEAN
       },
+      description: {
+        type: Sequelize.TEXT
+      },
       date: {
         type: Sequelize.DATE
       },

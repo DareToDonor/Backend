@@ -1,4 +1,4 @@
-const { Event, donor_locations } = require("../../models");
+const { Event, DonorLocation } = require("../../models");
 const { uploadFile } = require("../middlewares/uploadFile");
 const { addDonorLocation } = require("./locationServices");
 
@@ -25,7 +25,7 @@ const addEvent = async (newEventData, file) => {
     image,
     status,
   });
-  const donorLocation = await donor_locations.create({
+  const donorLocation = await DonorLocation.create({
     ...newEventData, 
     status,
     image

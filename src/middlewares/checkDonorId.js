@@ -6,7 +6,7 @@ const checkIdDonorMiddleware = async (req, res, next) => {
   const user = await User.findByPk(userId, {
     attributes: { exclude: ["password", "createdAt", "updatedAt"] },
   });
-  if (!user.IdDonor || isNaN(user.IdDonor)) {
+  if (!user.idDonor || !user.NIK) {
     return res.status(400).json({ error: 'Please Insert Profile Info' });
   }
 

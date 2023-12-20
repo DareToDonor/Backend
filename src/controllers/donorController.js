@@ -11,32 +11,40 @@ const {
     editDonorStatus
 } = require("../services/donorServices");
 
-router.get("/:idUser/:status", async (req, res, next) => {
-    await authMiddleware.checkLogin(req, res, next);
-    let userId = parseInt(req.params.idUser);
-    let status = Boolean(req.params.status);
-
-    let data = await getAllDonorByStatus(userId, status);
-
-    let code = (!data) ? 400 : 200;
-    let message = (!data) ?
-        ((status) ? "No donors have been made" : "No donor schedule have been made") :
-        "Data Retrieved Successfully";
-
-    return res.status(code).send( {
-        status: (!data ? "Failed" : "Success"),
-        message: message,
-        data: (!data ? null : data)
-    });
+router.get("/:idDonor/:status",authMiddleware.checkLogin, async (req, res, next) => {
+    try {
+        // await authMiddleware.checkLogin(req, res, next);
+        let donorId = parseInt(req.params.idDonor);
+        let status = req.params.status;
+        console.log(typeof req.params.status);
+        
+        let data = await getAllDonorByStatus(donorId, status); 
+    
+        let code = (!data) ? 400 : 200;
+        let message = (!data) ?
+            ((status) ? "No donors have been made" : "No donor schedule have been made") :
+            "Data Retrieved Successfully";
+    
+        return res.status(code).send( {
+            status: (!data ? "Failed" : "Success"), 
+            message: message,
+            data: (!data ? null : data)
+        });
+    } catch (error) {
+        return res.status(400).send({
+            status: "Failed",
+            message: error.message
+        });
+    }
 });
 
-router.post("/:idUser", async (req, res, next) => {
+router.post("/:idDonor",authMiddleware.checkLogin, checkDonorIdMiddleware, async (req, res, next) => {
     try {
-        await authMiddleware.checkLogin(req, res, next);
-        let userId = parseInt(req.params.idUser);
+        // await authMiddleware.checkLogin(req, res, next);
+        let donorId = parseInt(req.params.idDonor);
         let data = req.body;
 
-        let createNewDonor = await createDonor(data, userId);
+        let createNewDonor = await createDonor(data, donorId);
         return res.status(200).send({
             status: "Success",
             message: "Data added successfully",
@@ -50,12 +58,12 @@ router.post("/:idUser", async (req, res, next) => {
     }
 });
 
-router.get("/:idDonor", async (req, res, next) => {
-    await authMiddleware.checkLogin(req, res, next);
-    await checkDonorIdMiddleware(req, res, next);
+router.get("/:donorCode",authMiddleware.checkLogin, checkDonorIdMiddleware, async (req, res, next) => {
+    // await authMiddleware.checkLogin(req, res, next);
+    // await checkDonorIdMiddleware(req, res, next);
 
-    let donorId = parseInt(req.params.idDonor);
-    let data = await getDonor(donorId);
+    let codeDonor = req.params.donorCode;
+    let data = await getDonor(codeDonor);
 
     let code = (!data) ? 400 : 200;
     let message = (!data) ? "Failed to fetch donor information" : "Successfully retrieved donor information";
@@ -67,13 +75,12 @@ router.get("/:idDonor", async (req, res, next) => {
     });
 });
 
-router.put("/:idDonor", async (req, res, next) => {
-    await authMiddleware.checkAdmin(req, res, next);
+router.put("/:donorCode", authMiddleware.checkAdmin, async (req, res, next) => {
 
     let { donorStatus } = req.body;
-    let donorId = parseInt(req.params.idDonor);
+    let codeDonor = req.params.donorCode;
     try {
-        let newData = await editDonorStatus(donorId, donorStatus);
+        let newData = await editDonorStatus(codeDonor, donorStatus);
 
         return res.status(200).send({
             status: "Success",
