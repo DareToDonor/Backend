@@ -1,9 +1,12 @@
 const express = require("express");
 const router = express.Router();
 
-const { getProfileUser, editProfileUser } = require("../services/userServices");
+const { upload } = require("../middlewares/uploadFile");
+const authMiddleware = require('../middlewares/authMiddleware');
 
-router.get("/", async (req, res) => {
+const { getProfileUser, editProfileUser } = require("../services/userServices")
+
+router.get("/", authMiddleware.checkLogin , async (req, res) => {
   try {
     const idUser = req.userInfo.id;
     const userInfo = await getProfileUser(idUser);
@@ -21,10 +24,13 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.put("/", async (req,res) => {
+router.put("/", authMiddleware.checkLogin, upload.single("imageProfile"), async (req,res) => {
   try {
     const idUser = req.userInfo.id;
-    const userInfo = await editProfileUser(idUser);
+    const newData = req.body;
+    const file = req.file;
+
+    const userInfo = await editProfileUser(idUser, newData, file);
     return res.status(200).send({
       status: "success",
       message: "get user info success",
@@ -33,7 +39,7 @@ router.put("/", async (req,res) => {
   } catch (error) {
     return res.status(400).send({
       status: "failed",
-      message: "failed to get user info ",
+      message: error.message,
     });
   }
 });
