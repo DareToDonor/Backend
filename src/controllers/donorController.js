@@ -14,7 +14,7 @@ const {
 router.get("/:idDonor/:status",authMiddleware.checkLogin, async (req, res, next) => {
     try {
         // await authMiddleware.checkLogin(req, res, next);
-        let donorId = parseInt(req.params.idDonor);
+        let donorId = req.params.idDonor;
         let status = req.params.status;
         console.log(typeof req.params.status);
         
