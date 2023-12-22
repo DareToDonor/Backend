@@ -3,18 +3,18 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
 const register = async (data) => {
-  if (
-    !data.firstName ||
-    !data.lastName ||
-    !data.email ||
-    !data.password ||
-    !data.phoneNumber
-  ) {
-    throw Error("All field must be filled");
-  }
+  // if (
+  //   !data.firstName ||
+  //   !data.lastName ||
+  //   !data.email ||
+  //   !data.password ||
+  //   !data.phoneNumber
+  // ) {
+  //   throw Error("All field must be filled");
+  // }
   const checkEmail = await User.findOne({
     where: {
-      email: data.email,
+      email: data.email, 
     },
   });
   if (checkEmail) {
